@@ -1,0 +1,16 @@
+digraph {
+	A
+	B
+	C
+	D [shape=doublecircle]
+	E [shape=doublecircle]
+	A [color=red]
+	A -> B [label=0]
+	A -> C [label=1]
+	B -> D [label="Îµ"]
+	C -> E [label="Îµ"]
+	D -> D [label=0]
+	D -> E [label=1]
+	E -> E [label=0]
+	E -> D [label=1]
+}
