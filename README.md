@@ -2,6 +2,18 @@
 
 Este módulo fornece uma ferramenta que lê um Autômato Finito Não Determinístico (AFND) de um arquivo, converte-o em um Autômato Finito Determinístico (AFD), grava o AFD em outro arquivo e cria gráficos representando ambos os autômatos.
 
+## Índice
+1. [Documentação do Conversor de AFND para AFD](#documentação-do-conversor-de-afnd-para-afd)
+2. [Funções](#funções)
+   - [ler_afnd(caminho_arquivo)](#ler_afndcaminho_arquivo)
+   - [escrever_afd(caminho_arquivo, estados, estado_inicial, estados_finais, transicoes)](#escrever_afdcaminho_arquivo-estados-estado_inicial-estados_finais-transicoes)
+   - [afnd_para_afd(estados, estado_inicial, estados_finais, transicoes)](#afnd_para_afdestados-estado_inicial-estados_finais-transicoes)
+   - [criar_grafico(caminho_arquivo, estados, estado_inicial, estados_finais, transicoes)](#criar_graficocaminho_arquivo-estados-estado_inicial-estados_finais-transicoes)
+3. [Uso](#uso)
+4. [Exemplo](#exemplo)
+5. [Autor](#autor)
+6. [Ferramentas Utilizadas](#ferramentas-utilizadas)
+
 ## Funções
 
 ### `ler_afnd(caminho_arquivo)`
