@@ -1,6 +1,5 @@
 from graphviz import Digraph
 
-
 # Lê um autômato finito não determinístico (AFND) de um arquivo
 def ler_afnd(caminho_arquivo):
     with open(caminho_arquivo, 'r') as arquivo:
@@ -21,61 +20,51 @@ def escrever_afd(caminho_arquivo, estados, estado_inicial, estados_finais, trans
             arquivo.write(' '.join(transicao) + '\n')
 
 
-# Calcula o fechamento epsilon para um estado
-def fechamento_epsilon(transicoes, estados):
-    fechamento = {estado: {estado} for estado in estados}
-
-    while True:
-        fechamento_atualizado = fechamento.copy()
-        for origem, rotulo, destino in transicoes:
-            if rotulo == 'ε':
-                fechamento_atualizado[origem] |= fechamento[destino]
-
-        if fechamento_atualizado == fechamento:
-            break
-        else:
-            fechamento = fechamento_atualizado
-
-    return fechamento
-
-
-# Remove movimentos vazios (transições epsilon) do AFND
-def remover_movimentos_vazios(estados, estado_inicial, estados_finais, transicoes):
-    fechamento = fechamento_epsilon(transicoes, estados)
-    novas_transicoes = [
-        [origem, rotulo, destino]
-        for origem, rotulo, destino in transicoes if rotulo != 'ε'
-        for origem in fechamento[origem]
-    ]
-
-    novos_estados_finais = {estado for estado in estados if fechamento[estado] & estados_finais}
-
-    return estados, estado_inicial, novos_estados_finais, novas_transicoes
-
-
 # Converte um AFND para um AFD
 def afnd_para_afd(estados, estado_inicial, estados_finais, transicoes):
     transicoes_afd = []
 
-    mapeamento_estados = {frozenset({estado_inicial}): "Q0"}
-    novos_estados = [frozenset({estado_inicial})]
+    # Função auxiliar para obter o fechamento epsilon de um conjunto de estados
+    def fechamento_epsilon(estado_atual):
+        fechamento = set(estado_atual)
+        fila = list(estado_atual)
+
+        while fila:
+            estado = fila.pop()
+            for origem, rotulo, destino in transicoes:
+                if estado == origem and rotulo == 'e' and destino not in fechamento:
+                    fechamento.add(destino)
+                    fila.append(destino)
+
+        return frozenset(fechamento)
+
+    mapeamento_estados = {}  # Usar um dicionário para mapear conjuntos de estados para estados AFD
+    novos_estados = [fechamento_epsilon({estado_inicial})]
+    mapeamento_estados[novos_estados[0]] = "Q0"
 
     while novos_estados:
         estado_atual = novos_estados.pop()
 
         for simbolo in '01':
-            proximo_estado = {destino for estado in estado_atual for origem, rotulo, destino in transicoes if
-                              estado == origem and rotulo == simbolo}
-            if proximo_estado:
-                proximo_estado_congelado = frozenset(proximo_estado)
-                if proximo_estado_congelado not in mapeamento_estados:
-                    novos_estados.append(proximo_estado_congelado)
-                    mapeamento_estados[proximo_estado_congelado] = f"Q{len(mapeamento_estados)}"
+            proximo_estado = set()
 
-                transicoes_afd.append([mapeamento_estados[estado_atual], simbolo, mapeamento_estados[proximo_estado_congelado]])
+            for estado in estado_atual:
+                for origem, rotulo, destino in transicoes:
+                    if estado == origem and rotulo == simbolo:
+                        proximo_estado.add(destino)
+
+            if proximo_estado:
+                fechamento_proximo = fechamento_epsilon(proximo_estado)
+                if fechamento_proximo not in mapeamento_estados:
+                    novo_estado_afd = f"Q{len(mapeamento_estados)}"
+                    mapeamento_estados[fechamento_proximo] = novo_estado_afd
+                    novos_estados.append(fechamento_proximo)
+
+                transicoes_afd.append(
+                    [mapeamento_estados[estado_atual], simbolo, mapeamento_estados[fechamento_proximo]])
 
     estados_afd = list(mapeamento_estados.values())
-    estado_inicial_afd = mapeamento_estados[frozenset({estado_inicial})]
+    estado_inicial_afd = mapeamento_estados[fechamento_epsilon({estado_inicial})]
     estados_finais_afd = {mapeamento_estados[estado] for estado in mapeamento_estados if estado & estados_finais}
 
     return estados_afd, estado_inicial_afd, estados_finais_afd, transicoes_afd
@@ -95,9 +84,9 @@ def criar_grafico(caminho_arquivo, estados, estado_inicial, estados_finais, tran
 # Script principal
 if __name__ == "__main__":
     estados, estado_inicial, estados_finais, transicoes = ler_afnd('entrada.txt')
-    estados, estado_inicial, estados_finais, transicoes = remover_movimentos_vazios(estados, estado_inicial, estados_finais, transicoes)
 
-    estados_afd, estado_inicial_afd, estados_finais_afd, transicoes_afd = afnd_para_afd(estados, estado_inicial, estados_finais, transicoes)
+    estados_afd, estado_inicial_afd, estados_finais_afd, transicoes_afd = afnd_para_afd(estados, estado_inicial,
+                                                                                        estados_finais, transicoes)
 
     escrever_afd('saida.txt', estados_afd, estado_inicial_afd, estados_finais_afd, transicoes_afd)
     criar_grafico('afnd', estados, estado_inicial, estados_finais, transicoes)
