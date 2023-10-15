@@ -1,0 +1,31 @@
+digraph {
+	Q0
+	Q1
+	Q2
+	Q3
+	Q4 [shape=doublecircle]
+	Q5
+	Q6 [shape=doublecircle]
+	Q7
+	Q8 [shape=doublecircle]
+	Q9 [shape=doublecircle]
+	Q0 [color=red]
+	Q0 -> Q1 [label=0]
+	Q0 -> Q2 [label=1]
+	Q2 -> Q3 [label=0]
+	Q2 -> Q4 [label=1]
+	Q4 -> Q5 [label=0]
+	Q4 -> Q1 [label=1]
+	Q5 -> Q6 [label=0]
+	Q5 -> Q7 [label=1]
+	Q7 -> Q7 [label=0]
+	Q7 -> Q4 [label=1]
+	Q3 -> Q8 [label=0]
+	Q3 -> Q9 [label=1]
+	Q9 -> Q3 [label=0]
+	Q9 -> Q4 [label=1]
+	Q8 -> Q7 [label=0]
+	Q8 -> Q4 [label=1]
+	Q1 -> Q5 [label=0]
+	Q1 -> Q1 [label=1]
+}

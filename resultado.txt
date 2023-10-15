@@ -1,0 +1,19 @@
+0100 aceito
+010101 aceito
+0110101100 aceito
+01111100 aceito
+0111110100001 aceito
+011111010000111111100 aceito
+abbba não aceito
+1000111 não aceito
+100011100 aceito
+100011100111111100 não aceito
+1 não aceito
+11 aceito
+111 não aceito
+1111111 não aceito
+0110101011 aceito
+10110100 não aceito
+110101 aceito
+001001010 não aceito
+1101010101 aceito
